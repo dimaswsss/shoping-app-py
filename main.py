@@ -3,14 +3,14 @@ import os
 
 
 class Transaction:
-    def __init__(self, name_buyer):
-        self.name_buyer = name_buyer
+    def __init__(self, buyer_name):
+        self.buyer_name = buyer_name
         self.df = pd.DataFrame(columns=['name', 'quantity', 'price@quantity'])
 
-    def add_data(self, item: str, quantity: int, price: int):
+    def add_data(self, item_name: str, item_quantity: int, item_price: int):
         try:
             self.df = pd.concat([self.df, pd.DataFrame.from_records([
-                {'name': item, 'quantity': quantity, 'price@quantity': price}
+                {'name': item_name, 'quantity': item_quantity, 'price@quantity': item_price}
             ])], ignore_index=True)
             print("-" * 60)
             print("Item added successfully!")
@@ -19,22 +19,20 @@ class Transaction:
         except:
             return "Error! Please check your input!\n\n"
 
-    def update_item_column(self, item: str, column: str, value):
-        print("-" * 60)
-        print("Update item in transaction")
+    def update_item_column(self, item_name: str, column_name: str, value):
         print("-" * 60)
         try:
-            self.df.loc[self.df['name'] == item, column] = value
+            self.df.loc[self.df['name'] == item_name, column_name] = value
             print("Item updated successfully!")
             return self.df
         except:
             return "Error! Please check your input!"
 
-    def delete_item(self, item: str):
+    def delete_item(self, item_name: str):
         os.system('clear')
         print("-" * 60)
         try:
-            self.df.drop(self.df[self.df['name'] == item].index, inplace=True)
+            self.df.drop(self.df[self.df['name'] == item_name].index, inplace=True)
             print("Item deleted successfully!")
             self.check_order()
             return self.df
@@ -88,7 +86,7 @@ class Transaction:
         print("Save transaction")
         print("-" * 60)
         try:
-            self.df.to_csv(f'{self.name_buyer}.csv', index=False)
+            self.df.to_csv(f'{self.buyer_name}.csv', index=False)
             print("Transaction saved successfully!")
             print("-" * 60, "\n\n")
             return self.df
@@ -96,110 +94,111 @@ class Transaction:
             return "Error!"
 
 
-def pilihan():
-    print("1. Cek Transaksi")
-    print("2. Tambahkan Barang")
-    print("3. Update Barang yang Ingin Dibeli")
-    print("4. Batal Membeli")
-    print("5. Total Belanjaan")
-    print("6. Simpan")
+def show_menu():
+    print("1. Check Transaction")
+    print("2. Add Item")
+    print("3. Update Item")
+    print("4. Cancel Purchase")
+    print("5. Total Price")
+    print("6. Save Transaction")
     print("7. Exit\n")
-    choice = input("Masukkan pilihan: ")
+    choice = input("Enter choice: ")
     if choice == "1":
         os.system('clear')
         transaction.check_order()
-        pilihan()
+        show_menu()
     elif choice == "2":
         os.system('clear')
         print("-" * 60)
-        print("Add new item to transaction")
+        print("Add New Item to Transaction")
         print("-" * 60)
-        print("1. Lanjutkan membeli barang")
-        print("2. Kembali")
-        choice = int(input("Masukkan pilihan: "))
+        print("1. Continue Adding Items")
+        print("2. Go Back")
+        choice = int(input("Enter choice: "))
         if choice == 1:
             os.system('clear')
             print("-" * 60)
-            print("Add new item to transaction")
+            print("Add New Item to Transaction")
             print("-" * 60)
-            name = input("Masukkan nama barang: ")
-            quantity = int(input("Masukkan jumlah barang: "))
-            price = int(input("Masukkan harga barang: "))
+            name = input("Enter item name: ")
+            quantity = int(input("Enter item quantity: "))
+            price = int(input("Enter item price: "))
             transaction.add_data(name, quantity, price)
-            again = input("Tambahkan barang lagi? (y/n): ")
+            again = input("Add another item? (y/n): ")
             while again == "y":
-                name = input("Masukkan nama barang: ")
-                quantity = int(input("Masukkan jumlah barang: "))
-                price = int(input("Masukkan harga barang: "))
+                name = input("Enter item name: ")
+                quantity = int(input("Enter item quantity: "))
+                price = int(input("Enter item price: "))
                 transaction.add_data(name, quantity, price)
-                again = input("Tambahkan barang lagi? (y/n): ")
+                again = input("Add another item? (y/n): ")
             os.system('clear')
             transaction.check_order()
-            pilihan()
+            show_menu()
         elif choice == 2:
-            pilihan()
+            show_menu()
     elif choice == "3":
         os.system('clear')
         print("-" * 60)
-        print("Modify item in transaction")
+        print("Modify Item in Transaction")
         print("-" * 60)
-        print("1. Lanjutkan edit barang")
-        print("2. Kembali")
-        choice = int(input("Masukkan pilihan: "))
+        print("1. Continue Editing Items")
+        print("2. Go Back")
+        choice = int(input("Enter choice: "))
         if choice == 1:
             os.system('clear')
             print("-" * 60)
-            print("Modify item in transaction")
+            print("Modify Item in Transaction")
             print("-" * 60)
             transaction.check_order()
-            name = input(f"Masukkan nama barang yang ingin diubah: ")
-            column = input("Masukkan kolom yang ingin diubah: ")
-            value = input(f"Masukkan nilai baru: ")
+            name = input("Enter item name to modify: ")
+            column = input("Enter column to modify: ")
+            value = input("Enter new value: ")
+            os.system('clear')
             transaction.update_item_column(name, column, value)
             transaction.check_order()
-            pilihan()
+            show_menu()
         elif choice == 2:
-            pilihan()
+            show_menu()
     elif choice == "4":
         os.system('clear')
         print("-" * 60)
-        print("Batal Membeli")
+        print("Cancel Purchase")
         transaction.check_order()
-        print('1. Hapus barang')
-        print('2. Reset transaksi')
-        print('3. Kembali')
-        choice = int(input('Masukkan pilihan: '))
+        print('1. Delete Item')
+        print('2. Reset Transaction')
+        print('3. Go Back')
+        choice = int(input('Enter choice: '))
         if choice == 1:
             os.system('clear')
             print("-" * 60)
             print("Delete Item")
             transaction.check_order()
-            item = str(input('Masukkan nama barang yang ingin dihapus: '))
+            item = str(input('Enter item name to delete: '))
             transaction.delete_item(item)
         elif choice == 2:
             os.system('clear')
             transaction.reset_transaction()
         elif choice == 3:
             os.system('clear')
-            pilihan()
+            show_menu()
         else:
-            print("Pilihan tidak tersedia")
-        pilihan()
+            print("Invalid choice")
+        show_menu()
     elif choice == "5":
         os.system('clear')
         transaction.total_price()
-        pilihan()
+        show_menu()
     elif choice == "6":
         os.system('clear')
         transaction.save_transaction()
-        pilihan()
+        show_menu()
     elif choice == "7":
         os.system('clear')
-        print("Terima kasih telah berbelanja")
+        print("Thank you for shopping!")
     else:
         os.system('clear')
-        print("Pilihan tidak tersedia\n\n")
-        pilihan()
+        print("Invalid choice\n\n")
+        show_menu()
 
 
 def main():
@@ -207,8 +206,8 @@ def main():
     transaction = Transaction("dimas")
     os.system('clear')
     print("-" * 60)
-    print("Selamat datang di aplikasi belanja!")
+    print("Welcome to the shopping application!")
     print("-" * 60)
-    pilihan()
+    show_menu()
 
 main()
